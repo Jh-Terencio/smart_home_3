@@ -34,6 +34,7 @@ nav ul li a {
   color: white;
   padding: 5px 20px;
   display: inline-block;
+  transition: background-color 0.3s ease;
 }
 
 nav ul li a:hover {
@@ -57,4 +58,12 @@ th, td {
 
 th {
   background-color: #f2f2f2;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #e0e0e0;
 }
