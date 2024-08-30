@@ -92,25 +92,6 @@ class GasDetector(Subscriber):
         print(action)
         DeviceAction.log('Gas Detector', action)
 
-class Sprinkler(Subscriber):
-    def __init__(self, broker):
-        self.broker = broker
-        self.humidity = None
-        self.temperature = None
-
-    def update(self, humidity=None, temperature=None):
-        if humidity is not None:
-            self.humidity = humidity
-        if temperature is not None:
-            self.temperature = temperature
-        
-        if self.humidity is not None and self.temperature is not None:
-            action = "Conditions are normal."
-            if self.humidity < 40 and self.temperature > 30:
-                action = "Low humidity and high temperature detected! Activating sprinkler..."
-            print(action)
-            DeviceAction.log('Sprinkler', action)
-
 class Lamp(Subscriber):
     def __init__(self, broker):
         self.broker = broker

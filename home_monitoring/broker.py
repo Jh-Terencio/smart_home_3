@@ -27,12 +27,4 @@ class MessageBroker:
             SensorData.log(topic, message)
             SensorState.update(topic, message)
             for subscriber in self.subscribers[topic]:
-                if topic in ['humidity', 'temperature']:
-                    from .sensors import Sprinkler  # Import here to avoid circular dependency
-                    if isinstance(subscriber, Sprinkler):
-                        if topic == 'humidity':
-                            subscriber.update(humidity=message)
-                        elif topic == 'temperature':
-                            subscriber.update(temperature=message)
-                else:
-                    subscriber.update(message)
+                subscriber.update(message)

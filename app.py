@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from home_monitoring import MessageBroker, TemperatureSensor, HumiditySensor, MotionSensor, GasSensor, LightSensor
-from home_monitoring.models import SensorData, DeviceAction, SensorState
-from home_monitoring.sensors import GasDetector, Humidifier, Lamp, SecurityAlarm, SmartThermostat, Sprinkler
+from home_monitoring.models import SensorData, DeviceAction
+from home_monitoring.sensors import GasDetector, Humidifier, Lamp, SecurityAlarm, SmartThermostat
 
 app = Flask(__name__)
 
@@ -67,7 +67,6 @@ if __name__ == '__main__':
     humidifier = Humidifier(broker)
     alarm = SecurityAlarm(broker)
     gas_detector = GasDetector(broker)
-    sprinkler = Sprinkler(broker)
     lamp = Lamp(broker)
 
     broker.subscribe('temperature', thermostat)
@@ -75,8 +74,6 @@ if __name__ == '__main__':
     broker.subscribe('motion', alarm)
     broker.subscribe('gas', gas_detector)
     broker.subscribe('light', lamp)
-    broker.subscribe('humidity', sprinkler)
-    broker.subscribe('temperature', sprinkler)
 
     # Schedule sensor data simulation with throttling
     # scheduler = BackgroundScheduler()
