@@ -26,14 +26,14 @@ class SensorData:
 
 class DeviceAction:
     @staticmethod
-    def log(device_name, action):
+    def log(device_name, action, last_value):
         conn = get_db_connection()
         cursor = conn.cursor()
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cursor.execute('''
-            INSERT INTO device_actions (device_name, action, timestamp)
-            VALUES (?, ?, ?)
-        ''', (device_name, action, timestamp))
+            INSERT INTO device_actions (device_name, action, last_value, timestamp)
+            VALUES (?, ?, ?, ?)
+        ''', (device_name, action, last_value, timestamp))
         conn.commit()
         conn.close()
 

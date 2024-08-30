@@ -22,6 +22,7 @@ def create_tables():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             device_name TEXT NOT NULL,
             action TEXT NOT NULL,
+            last_value REAL,
             timestamp TEXT NOT NULL
         )
     ''')

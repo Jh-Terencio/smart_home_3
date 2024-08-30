@@ -1,9 +1,24 @@
 from flask import Flask, render_template, jsonify, request
 from home_monitoring import MessageBroker, TemperatureSensor, HumiditySensor, MotionSensor, GasSensor, LightSensor
-from home_monitoring.models import SensorData, DeviceAction
+from home_monitoring.models import SensorData, DeviceAction, SensorState
 from home_monitoring.sensors import GasDetector, Humidifier, Lamp, SecurityAlarm, SmartThermostat
 
 app = Flask(__name__)
+
+@app.route('/api/current_conditions')
+def current_conditions():
+    sensor_data = SensorState.get_all()
+    
+    # Assuming the sensor names are 'temperature' and 'humidity'
+    data = {sensor['sensor_name']: sensor['last_value'] for sensor in sensor_data}
+    
+    return jsonify({
+        'temperature': data.get('temperature', None),
+        'humidity': data.get('humidity', None),
+        'motion': data.get('motion', None),
+        'gas': data.get('gas', None),
+        'light': data.get('light', None),
+    })
 
 @app.route('/')
 def index():

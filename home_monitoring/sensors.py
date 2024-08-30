@@ -37,7 +37,7 @@ class GasSensor(SensorProxy):
 
 class LightSensor(SensorProxy):
     def read_light(self):
-        light_level = round(random.uniform(0, 1000), 2)
+        light_level = round(random.uniform(0, 800), 2)
         self.publish_data('light', light_level, threshold=20.0)
 
 # Observer Pattern for Subscribers
@@ -57,7 +57,7 @@ class SmartThermostat(Subscriber):
         elif temperature < 15:
             action = "Turning on the heater..."
         print(action)
-        DeviceAction.log('Smart Thermostat', action)
+        DeviceAction.log('Smart Thermostat', action, temperature)
 
 class Humidifier(Subscriber):
     def __init__(self, broker):
@@ -68,7 +68,7 @@ class Humidifier(Subscriber):
         if humidity < 40:
             action = "Turning on the humidifier..."
         print(action)
-        DeviceAction.log('Humidifier', action)
+        DeviceAction.log('Humidifier', action, humidity)
 
 class SecurityAlarm(Subscriber):
     def __init__(self, broker):
@@ -79,7 +79,7 @@ class SecurityAlarm(Subscriber):
         if motion_detected:
             action = "Motion detected! Triggering alarm..."
         print(action)
-        DeviceAction.log('Security Alarm', action)
+        DeviceAction.log('Security Alarm', action, motion_detected)
 
 class GasDetector(Subscriber):
     def __init__(self, broker):
@@ -90,7 +90,7 @@ class GasDetector(Subscriber):
         if gas_level > 300:
             action = "High gas level detected! Ventilating area..."
         print(action)
-        DeviceAction.log('Gas Detector', action)
+        DeviceAction.log('Gas Detector', action, gas_level)
 
 class Lamp(Subscriber):
     def __init__(self, broker):
@@ -103,4 +103,4 @@ class Lamp(Subscriber):
         else:
             action = "Sufficient light detected! Turning off the lamp..."
         print(action)
-        DeviceAction.log('Lamp', action)
+        DeviceAction.log('Lamp', action, light_level)
