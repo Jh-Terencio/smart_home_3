@@ -19,6 +19,11 @@ def device_actions():
     actions = DeviceAction.get_all()
     return render_template('data.html', data=actions, title="Device Actions")
 
+@app.route('/simulate_sensor_data', methods=['POST'])
+def simulate_sensor_data_route():
+    simulate_sensor_data()
+    return jsonify({"message": "Sensor data simulated successfully!"}), 200
+
 @app.route('/api/sensor_data')
 def api_sensor_data():
     data = SensorData.get_all()
@@ -74,9 +79,9 @@ if __name__ == '__main__':
     broker.subscribe('temperature', sprinkler)
 
     # Schedule sensor data simulation with throttling
-    scheduler = BackgroundScheduler()
-    # Example interval between 30 and 60 seconds
-    scheduler.add_job(simulate_sensor_data, 'interval', seconds=random.randint(30, 60))
-    scheduler.start()
+    # scheduler = BackgroundScheduler()
+    # # Example interval between 30 and 60 seconds
+    # scheduler.add_job(simulate_sensor_data, 'interval', seconds=random.randint(30, 60))
+    # scheduler.start()
 
     app.run(debug=True)

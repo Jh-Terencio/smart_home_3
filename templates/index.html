@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Monitoring Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -18,7 +19,25 @@
         <div id="content">
             <h2>Welcome to the Home Monitoring Dashboard</h2>
             <p>Select an option from the menu to view data.</p>
+            <button id="simulate-button">Simulate Sensor Data</button>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#simulate-button').click(function() {
+                $.ajax({
+                    url: "{{ url_for('simulate_sensor_data_route') }}",
+                    type: 'POST',
+                    success: function(response) {
+                        alert(response.message);
+                    },
+                    error: function(xhr, status, error) {
+                        alert("An error occurred: " + error);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
