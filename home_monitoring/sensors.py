@@ -1,8 +1,10 @@
 # home_monitoring/sensors.py
+
 import random
 from .broker import MessageBroker
 from .models import DeviceAction
 
+# Classe base para os sensores que utilizam o padrao Proxy para publicacao de dados
 class SensorProxy:
     def __init__(self, broker):
         self.broker = broker
@@ -14,7 +16,8 @@ class SensorProxy:
             self.broker.publish(topic, data)
             self.last_published_values[topic] = data
 
-# Implementação de Sensores with conditional logging
+# Classes especificas de sensores que herdam de SensorProxy
+
 class TemperatureSensor(SensorProxy):
     def read_temperature(self):
         temperature = round(random.uniform(15.0, 35.0), 2)
@@ -40,67 +43,89 @@ class LightSensor(SensorProxy):
         light_level = round(random.uniform(0, 800), 2)
         self.publish_data('light', light_level, threshold=20.0)
 
-# Observer Pattern for Subscribers
+# Classe base para dispositivos que atuam como Subscribers no padrao Observer
+
 class Subscriber:
     def update(self, message):
         raise NotImplementedError("Subscribers must implement the update method.")
 
-# Implementação de Dispositivos
+# Classes especificas de dispositivos que herdam de Subscriber
+
 class SmartThermostat(Subscriber):
     def __init__(self, broker):
         self.broker = broker
 
     def update(self, temperature):
-        action = "Temperature is comfortable."
+        """
+        Atualiza o estado do termostato com base na temperatura recebida.
+        Liga o ar condicionado se estiver quente ou o aquecedor se estiver frio.
+        """
+        acao = "A temperatura esta confortavel."
         if temperature > 25:
-            action = "Turning on the air conditioner..."
+            acao = "Ligando o ar condicionado..."
         elif temperature < 15:
-            action = "Turning on the heater..."
-        print(action)
-        DeviceAction.log('Smart Thermostat', action, temperature)
+            acao = "Ligando o aquecedor..."
+        print(acao)
+        DeviceAction.log('Termostato Inteligente', acao, temperature)
 
 class Humidifier(Subscriber):
     def __init__(self, broker):
         self.broker = broker
 
     def update(self, humidity):
-        action = "Humidity is at a good level."
+        """
+        Atualiza o estado do umidificador com base na umidade recebida.
+        Liga o umidificador se a umidade estiver baixa.
+        """
+        acao = "A umidade esta em um nivel bom."
         if humidity < 40:
-            action = "Turning on the humidifier..."
-        print(action)
-        DeviceAction.log('Humidifier', action, humidity)
+            acao = "Ligando o umidificador..."
+        print(acao)
+        DeviceAction.log('Umidificador', acao, humidity)
 
 class SecurityAlarm(Subscriber):
     def __init__(self, broker):
         self.broker = broker
 
     def update(self, motion_detected):
-        action = "No motion detected."
+        """
+        Atualiza o estado do alarme de seguranca com base na deteccao de movimento.
+        Dispara o alarme se houver movimento detectado.
+        """
+        acao = "Nenhum movimento detectado."
         if motion_detected:
-            action = "Motion detected! Triggering alarm..."
-        print(action)
-        DeviceAction.log('Security Alarm', action, motion_detected)
+            acao = "Movimento detectado! Disparando alarme..."
+        print(acao)
+        DeviceAction.log('Alarme de Seguranca', acao, motion_detected)
 
 class GasDetector(Subscriber):
     def __init__(self, broker):
         self.broker = broker
 
     def update(self, gas_level):
-        action = "Gas level normal."
+        """
+        Atualiza o estado do detector de gas com base no nivel de gas recebido.
+        Aciona a ventilacao se o nivel de gas estiver elevado.
+        """
+        acao = "Nivel de gas normal."
         if gas_level > 300:
-            action = "High gas level detected! Ventilating area..."
-        print(action)
-        DeviceAction.log('Gas Detector', action, gas_level)
+            acao = "Nivel de gas elevado detectado! Ventilando area..."
+        print(acao)
+        DeviceAction.log('Detector de Gas', acao, gas_level)
 
 class Lamp(Subscriber):
     def __init__(self, broker):
         self.broker = broker
 
     def update(self, light_level):
-        action = "Light level is sufficient."
+        """
+        Atualiza o estado da lâmpada com base no nivel de luminosidade recebido.
+        Liga a lâmpada se a luminosidade estiver baixa, desliga se estiver suficiente.
+        """
+        acao = "Nivel de luz suficiente."
         if light_level < 300:
-            action = "Low light detected! Turning on the lamp..."
+            acao = "Baixa luminosidade detectada! Ligando a lâmpada..."
         else:
-            action = "Sufficient light detected! Turning off the lamp..."
-        print(action)
-        DeviceAction.log('Lamp', action, light_level)
+            acao = "Luminosidade suficiente detectada! Desligando a lâmpada..."
+        print(acao)
+        DeviceAction.log('Lâmpada', acao, light_level)

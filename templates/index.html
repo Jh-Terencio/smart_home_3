@@ -9,17 +9,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Home Monitoring Dashboard</h1>
+        <h1>Dashboard de monitoramento doméstico</h1>
         <nav>
             <ul>
-                <li><a href="{{ url_for('sensor_data') }}">Sensor Data</a></li>
-                <li><a href="{{ url_for('device_actions') }}">Device Actions</a></li>
+                <li><a href="{{ url_for('sensor_data') }}">Histórico</a></li>
+                <li><a href="{{ url_for('device_actions') }}">Açoes dos aparelhos</a></li>
             </ul>
         </nav>
         <div id="content">
-            <h2>Devices</h2>
+            <h2>Aparelhos</h2>
             <div id="devices">
-                <!-- Example device entry -->
                 <div class="device" data-device="thermostat">
                     <img id="thermostat-img" src="{{ url_for('static', filename='images/thermostat_off.png') }}" alt="Thermostat">
                     <p>Termostato</p>
@@ -46,13 +45,12 @@
                     <span class="tooltip"></span>
                 </div>
             </div>
-            <button id="simulate-button">Simulate Sensor Data</button>
+            <button id="simulate-button">Simular dados do sensor</button>
         </div>
     </div>
 
     <script>
         $(document).ready(function() {
-    // Function to handle device image changes and tooltips based on their states
     function updateDeviceImages() {
         $.ajax({
             url: "/api/current_conditions",
@@ -64,7 +62,6 @@
                 let gas = response.gas;
                 let motion = response.motion;
 
-                // Update thermostat image and tooltip based on temperature
                 if (temperature > 25) {
                     $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_cool.png') }}");
                 } else if (temperature < 15){
@@ -74,7 +71,6 @@
                 }
                 $('div[data-device="thermostat"] .tooltip').text('Temperature: ' + temperature + '°C');
 
-                // Update humidifier image and tooltip based on humidity
                 if (humidity < 40) {
                     $('#humidifier-img').attr('src', "{{ url_for('static', filename='images/humidifier_on.png') }}");
                 } else {
@@ -82,7 +78,6 @@
                 }
                 $('div[data-device="humidifier"] .tooltip').text('Humidity: ' + humidity + '%');
 
-                // Update lamp image and tooltip based on light
                 if (light < 300) {
                     $('#lamp-img').attr('src', "{{ url_for('static', filename='images/lamp_on.png') }}");
                 } else {
@@ -90,7 +85,6 @@
                 }
                 $('div[data-device="lamp"] .tooltip').text('Light: ' + light + ' lux');
 
-                // Update gas detector image and tooltip based on gas level
                 if (gas > 300){
                     $('#gas-img').attr('src', "{{ url_for('static', filename='images/sensor_gas_on.png') }}");
                 } else{
@@ -98,7 +92,6 @@
                 }
                 $('div[data-device="gas"] .tooltip').text('Gas: ' + gas + ' ppm');
 
-                // Update motion sensor image and tooltip based on motion detection
                 if (motion == 1) {
                     $('#movimento-img').attr('src', "{{ url_for('static', filename='images/sensor_movimento_on.png') }}");
                 } else{
@@ -107,12 +100,11 @@
                 $('div[data-device="motion"] .tooltip').text('Motion: ' + (motion == 1 ? 'Detected' : 'None'));
             },
             error: function(xhr, status, error) {
-                alert("An error occurred while fetching the current conditions: " + error);
+                alert("Um erro ocorreu enquanto buscava as condiçoes atuais: " + error);
             }
         });
     }
 
-    // Button to simulate sensor data
     $('#simulate-button').click(function() {
         $.ajax({
             url: "{{ url_for('simulate_sensor_data_route') }}",
@@ -122,16 +114,14 @@
                 updateDeviceImages();
             },
             error: function(xhr, status, error) {
-                alert("An error occurred: " + error);
+                alert("Ocorreu um erro: " + error);
             }
         });
     });
 
-    // Call updateDeviceImages on page load to set initial images
     updateDeviceImages();
 });
-
-        
+   
     </script>
 </body>
 </html>

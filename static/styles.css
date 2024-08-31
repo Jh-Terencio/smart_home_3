@@ -10,7 +10,7 @@ body {
   width: 80%;
   margin: auto;
   padding: 20px;
-  background-color: #34495e;
+  background: linear-gradient(145deg, #34495e, #2c3e50);
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
@@ -69,19 +69,22 @@ nav ul li a:hover {
 }
 
 .device img {
-  width: 250px; /* Aumentei o tamanho da largura da imagem */
-  height: 250px; /* Aumentei o tamanho da altura da imagem */ 
+  width: 250px; 
+  height: 250px; 
   margin-bottom: 10px;
 }
 
 .device p {
   margin: 0;
   font-weight: bold;
+  transition: transform 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease
 }
 
 .device:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    background-color: #1abc9c;
+    color: #fff;
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
 }
 
 button {
@@ -99,7 +102,8 @@ button {
 
 button:hover {
   background-color: #c0392b;
-  transform: translateY(-3px);
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
 .device {
@@ -120,7 +124,7 @@ button:hover {
   padding: 5px;
   border-radius: 5px;
   position: absolute;
-  bottom: 120%; /* Position above the device */
+  bottom: 120%;
   left: 50%;
   transform: translateX(-50%);
   width: 120px;

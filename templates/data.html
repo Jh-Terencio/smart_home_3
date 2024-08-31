@@ -9,24 +9,26 @@
 <body>
     <div class="container">
         <h1>{{ title }}</h1>
-        <table>
-            <thead>
-                <tr>
-                    {% for column in data[0].keys() %}
-                    <th>{{ column }}</th>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for column in data[0].keys() %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="data-table">
+                    {% for row in data %}
+                    <tr>
+                        {% for value in row %}
+                        <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                </tr>
-            </thead>
-            <tbody id="data-table">
-                {% for row in data %}
-                <tr>
-                    {% for value in row %}
-                    <td>{{ value }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>
