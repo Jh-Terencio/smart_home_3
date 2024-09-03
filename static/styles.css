@@ -59,6 +59,10 @@ nav ul li a:hover {
   margin-top: 20px;
 }
 
+#sensors p{
+  text-align: center;
+}
+
 .device {
   text-align: center;
   background-color: #2c3e50;

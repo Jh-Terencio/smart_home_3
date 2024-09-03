@@ -6,72 +6,6 @@
     <title>Home Monitoring Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .device.selected {
-            background-color: #1abc9c;
-            color: #fff;
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
-            border: 2px solid #16a085;
-        }
-        /* Estilos para o modal */
-        #sensor-options-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-        #sensor-options-content {
-            background-color: #2c3e50;
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
-            color: #ecf0f1;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-        }
-        #sensor-options-content h3 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: #ecf0f1;
-        }
-        #sensor-options-content select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            background-color: #34495e;
-            color: #ecf0f1;
-            border: none;
-            border-radius: 5px;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
-            font-size: 16px;
-        }
-        #sensor-options-content button {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin-top: 20px;
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-        #sensor-options-content button:hover {
-            background-color: #c0392b;
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -105,189 +39,95 @@
             </div>
 
             <h2>Sensores Configurados</h2>
-            {% if sensors %}
-                <ul>
-                    {% for sensor in sensors %}
-                        <li>Sensor de {{ sensor.type }} - Threshold: {{ sensor.threshold }} - Intervalo: {{ sensor.interval }}s</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>Nenhum sensor configurado ainda.</p>
-            {% endif %}
+            <div id="sensors">
+                {% if sensors %}
+                    <ul>
+                        {% for sensor in sensors %}
+                            <li>Sensor de {{ sensor.type }} - Threshold: {{ sensor.threshold }} - Intervalo: {{ sensor.interval }}s</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Nenhum sensor configurado ainda.</p>
+                {% endif %}
+            </div>
 
             <button id="simulate-button">Simular dados do sensor</button>
         </div>
     </main>
 
-    <div id="sensor-options-modal">
-        <div id="sensor-options-content">
-            <h3>Configurações do Sensor</h3>
-            <p>Escolha uma opção:</p>
-            <select id="sensor-option">
-                <!-- Opções serão preenchidas dinamicamente -->
-            </select>
-            <button id="confirm-sensor-option">Confirmar</button>
-        </div>
-    </div>
-
     <script>
-        $(document).ready(function() {
-            let selectedDevice = null;
+            $(document).ready(function() {
+        function updateDeviceImages() {
+            $.ajax({
+                url: "/api/current_conditions",
+                type: 'GET',
+                success: function(response) {
+                    let temperature = response.temperature;
+                    let humidity = response.humidity;
+                    let light = response.light;
+                    let gas = response.gas;
+                    let motion = response.motion;
 
-            // Regras de negócio para cada sensor
-            const sensorRules = {
-                thermostat: [
-                    { condition: 'Temperatura > 25ºC', action: 'Ligar ar condicionado', device: 'Termostato Inteligente' },
-                    { condition: 'Temperatura < 15ºC', action: 'Ligar aquecedor', device: 'Termostato Inteligente' },
-                    { condition: '15ºC ≤ Temperatura ≤ 25ºC', action: 'Nenhuma ação (Temperatura confortável)', device: 'Termostato Inteligente' }
-                ],
-                humidifier: [
-                    { condition: 'Umidade < 40%', action: 'Ligar umidificador', device: 'Umidificador' },
-                    { condition: 'Umidade ≥ 40%', action: 'Nenhuma ação (Umidade em nível bom)', device: 'Umidificador' }
-                ],
-                motion: [
-                    { condition: 'Movimento detectado', action: 'Disparar alarme', device: 'Alarme de Segurança' },
-                    { condition: 'Nenhum movimento detectado', action: 'Nenhuma ação', device: 'Alarme de Segurança' }
-                ],
-                gas: [
-                    { condition: 'Nível de gás > 300 ppm', action: 'Ventilar área', device: 'Detector de Gás' },
-                    { condition: 'Nível de gás ≤ 300 ppm', action: 'Nenhuma ação (Nível de gás normal)', device: 'Detector de Gás' }
-                ],
-                lamp: [
-                    { condition: 'Luminosidade < 300 lux', action: 'Ligar lâmpada', device: 'Lâmpada' },
-                    { condition: 'Luminosidade ≥ 300 lux', action: 'Desligar lâmpada', device: 'Lâmpada' }
-                ]
-            };
+                    if (temperature > 25) {
+                        $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_cool.png') }}");
+                    } else if (temperature < 15){
+                        $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_heat.png') }}");
+                    } else {
+                        $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_off.png') }}");
+                    }
+                    $('div[data-device="thermostat"] .tooltip').text('Temperature: ' + temperature + '°C');
 
-            // Seleção de dispositivos
-            $('#devices .device').click(function() {
-                $('#devices .device').removeClass('selected');
-                $(this).addClass('selected');
-                selectedDevice = $(this).data('device');
-            });
+                    if (humidity < 40) {
+                        $('#humidifier-img').attr('src', "{{ url_for('static', filename='images/humidifier_on.png') }}");
+                    } else {
+                        $('#humidifier-img').attr('src', "{{ url_for('static', filename='images/humidifier_off.png') }}");
+                    }
+                    $('div[data-device="humidifier"] .tooltip').text('Humidity: ' + humidity + '%');
 
-            // Simulação de dados do sensor
-            $('#simulate-button').click(function() {
-                if (selectedDevice) {
-                    fillSensorOptions(selectedDevice);
-                    $('#sensor-options-modal').fadeIn();
-                } else {
-                    alert('Por favor, selecione um dispositivo.');
+                    if (light < 300) {
+                        $('#lamp-img').attr('src', "{{ url_for('static', filename='images/lamp_on.png') }}");
+                    } else {
+                        $('#lamp-img').attr('src', "{{ url_for('static', filename='images/lamp_off.png') }}");
+                    }
+                    $('div[data-device="lamp"] .tooltip').text('Light: ' + light + ' lux');
+
+                    if (gas > 300){
+                        $('#gas-img').attr('src', "{{ url_for('static', filename='images/sensor_gas_on.png') }}");
+                    } else{
+                        $('#gas-img').attr('src', "{{ url_for('static', filename='images/sensor_gas_off.png') }}");
+                    }
+                    $('div[data-device="gas"] .tooltip').text('Gas: ' + gas + ' ppm');
+
+                    if (motion == 1) {
+                        $('#movimento-img').attr('src', "{{ url_for('static', filename='images/sensor_movimento_on.png') }}");
+                    } else{
+                        $('#movimento-img').attr('src', "{{ url_for('static', filename='images/sensor_movimento_off.png') }}");
+                    }
+                    $('div[data-device="motion"] .tooltip').text('Motion: ' + (motion == 1 ? 'Detected' : 'None'));
+                },
+                error: function(xhr, status, error) {
+                    alert("Um erro ocorreu enquanto buscava as condiçoes atuais: " + error);
                 }
             });
+        }
 
-            // Preencher opções do modal com base no sensor selecionado
-            function fillSensorOptions(device) {
-                const options = sensorRules[device];
-                $('#sensor-option').empty();
-                options.forEach(option => {
-                    $('#sensor-option').append(`<option value="${option.newImage}">${option.condition} - ${option.action}</option>`);
-                });
-            }
-
-            // Confirmar opção do sensor
-            $('#confirm-sensor-option').click(function() {
-                let selectedOption = $('#sensor-option').val();
-                $('#sensor-options-modal').fadeOut();
-                simulateSensorData(selectedOption);
+        $('#simulate-button').click(function() {
+            $.ajax({
+                url: "{{ url_for('simulate_sensor_data_route') }}",
+                type: 'POST',
+                success: function(response) {
+                    alert(response.message);
+                    updateDeviceImages();
+                },
+                error: function(xhr, status, error) {
+                    alert("Ocorreu um erro: " + error);
+                }
             });
-
-            // Função para simular os dados do sensor
-            function simulateSensorData(option) {
-                $.ajax({
-                    url: "{{ url_for('simulate_sensor_data_route') }}",
-                    type: 'POST',
-                    data: { device: selectedDevice, option: option },
-                    success: function(response) {
-                        alert(response.message);
-                        updateDeviceImages();
-                        $('#devices .device.selected').removeClass('selected');
-                        selectedDevice = null;
-                    },
-                    error: function(xhr, status, error) {
-                        alert("Ocorreu um erro: " + error);
-                    }
-                });
-            }
-
-            let lastStates = {
-                temperature: null,
-                humidity: null,
-                light: null,
-                gas: null,
-                motion: null
-            };
-
-            function updateDeviceImages() {
-                $.ajax({
-                    url: "/api/current_conditions",
-                    type: 'GET',
-                    success: function(response) {
-                        let temperature = response.temperature;
-                        let humidity = response.humidity;
-                        let light = response.light;
-                        let gas = response.gas;
-                        let motion = response.motion;
-
-                        // Apenas atualizar a imagem se o valor mudou
-                        if (temperature !== lastStates.temperature) {
-                            if (temperature > 25) {
-                                $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_cool.png') }}");
-                            } else if (temperature < 15){
-                                $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_heat.png') }}");
-                            } else {
-                                $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_off.png') }}");
-                            }
-                            $('div[data-device="thermostat"] .tooltip').text('Temperature: ' + temperature + '°C');
-                            lastStates.temperature = temperature;
-                        }
-
-                        if (humidity !== lastStates.humidity) {
-                            if (humidity < 40) {
-                                $('#humidifier-img').attr('src', "{{ url_for('static', filename='images/humidifier_on.png') }}");
-                            } else {
-                                $('#humidifier-img').attr('src', "{{ url_for('static', filename='images/humidifier_off.png') }}");
-                            }
-                            $('div[data-device="humidifier"] .tooltip').text('Humidity: ' + humidity + '%');
-                            lastStates.humidity = humidity;
-                        }
-
-                        if (light !== lastStates.light) {
-                            if (light < 300) {
-                                $('#lamp-img').attr('src', "{{ url_for('static', filename='images/lamp_on.png') }}");
-                            } else {
-                                $('#lamp-img').attr('src', "{{ url_for('static', filename='images/lamp_off.png') }}");
-                            }
-                            $('div[data-device="lamp"] .tooltip').text('Light: ' + light + ' lux');
-                            lastStates.light = light;
-                        }
-
-                        if (gas !== lastStates.gas) {
-                            if (gas > 300){
-                                $('#gas-img').attr('src', "{{ url_for('static', filename='images/sensor_gas_on.png') }}");
-                            } else{
-                                $('#gas-img').attr('src', "{{ url_for('static', filename='images/sensor_gas_off.png') }}");
-                            }
-                            $('div[data-device="gas"] .tooltip').text('Gas: ' + gas + ' ppm');
-                            lastStates.gas = gas;
-                        }
-
-                        if (motion !== lastStates.motion) {
-                            if (motion == 1) {
-                                $('#movimento-img').attr('src', "{{ url_for('static', filename='images/sensor_movimento_on.png') }}");
-                            } else{
-                                $('#movimento-img').attr('src', "{{ url_for('static', filename='images/sensor_movimento_off.png') }}");
-                            }
-                            $('div[data-device="motion"] .tooltip').text('Motion: ' + (motion == 1 ? 'Detected' : 'None'));
-                            lastStates.motion = motion;
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert("Um erro ocorreu enquanto buscava as condiçoes atuais: " + error);
-                    }
-                });
-            }
         });
+
+        updateDeviceImages();
+    });
+
     </script>
 </body>
 </html>

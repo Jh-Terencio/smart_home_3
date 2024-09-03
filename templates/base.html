@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>{{ title }}</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Início</a></li>
+                <li><a href="{{ url_for('add_device') }}">Adicionar Dispositivo</a></li>
+                <li><a href="{{ url_for('configure_sensor') }}">Configurar Sensor</a></li>
+                <li><a href="{{ url_for('sensor_data') }}">Histórico</a></li>
+                <li><a href="{{ url_for('device_actions') }}">Ações dos aparelhos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            {% block content %}
+            
+            {% endblock %}
+        </div>
+    </main>
+</body>
+</html>

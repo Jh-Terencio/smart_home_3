@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends "base.html" %}
+
+    {% block content %}
+    <form action="/configure_sensor" method="POST">
+        <label for="sensor_type">Tipo de Sensor:</label><br>
+        <select id="sensor_type" name="sensor_type">
+            <option value="temperature">Temperatura</option>
+            <option value="humidity">Umidade</option>
+            <option value="motion">Movimento</option>
+            <option value="gas">Gás</option>
+            <option value="light">Luminosidade</option>
+        </select><br><br>
+    
+        <label for="threshold">Limite (Threshold):</label><br>
+        <input type="number" step="0.1" id="threshold" name="threshold" required><br><br>
+    
+        <label for="interval">Intervalo de Publicação (segundos):</label><br>
+        <input type="number" id="interval" name="interval" required><br><br>
+    
+        <input type="submit" value="Configurar Sensor">
+    </form>
+    {% endblock %}
+    
+
+</body>
+</html>

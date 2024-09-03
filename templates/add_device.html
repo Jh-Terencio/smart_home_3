@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="/add_device" method="POST">
+    <label for="device_name">Nome do Dispositivo:</label><br>
+    <input type="text" id="device_name" name="device_name" required><br><br>
+
+    <label for="device_type">Tipo de Dispositivo:</label><br>
+    <select id="device_type" name="device_type">
+        <option value="thermostat">Termostato</option>
+        <option value="humidifier">Umidificador</option>
+        <option value="alarm">Alarme de Segurança</option>
+        <option value="gas">Detector de Gás</option>
+        <option value="lamp">Lâmpada</option>
+    </select><br><br>
+
+    <input type="submit" value="Adicionar Dispositivo">
+</form>
+{% endblock %}

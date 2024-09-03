@@ -2,7 +2,6 @@ from flask import Flask, render_template, jsonify, request, redirect, url_for
 from home_monitoring import MessageBroker, TemperatureSensor, HumiditySensor, MotionSensor, GasSensor, LightSensor
 from home_monitoring.models import SensorData, DeviceAction, SensorState
 from home_monitoring.sensors import GasDetector, Humidifier, Lamp, SecurityAlarm, SmartThermostat
-from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 
@@ -100,7 +99,9 @@ def configure_sensor():
         return redirect(url_for('index'))
     return render_template('configure_sensor.html', title="Configurar Sensor")
 
-# função que simula a leitura de dados dos sensores
+from apscheduler.schedulers.background import BackgroundScheduler
+
+# funcao que simula a leitura de dados dos sensores
 def simulate_sensor_data():
     temp_sensor.read_temperature()
     humidity_sensor.read_humidity()
@@ -111,25 +112,25 @@ def simulate_sensor_data():
 if __name__ == '__main__':
     broker = MessageBroker.get_instance()  # Inicializa o broker de mensagens
 
-    # Inicializa os sensores
+    # inicializa os sensores
     temp_sensor = TemperatureSensor(broker)
     humidity_sensor = HumiditySensor(broker)
     motion_sensor = MotionSensor(broker)
     gas_sensor = GasSensor(broker)
     light_sensor = LightSensor(broker)
     
-    # Inicializa os dispositivos que responderão aos sensores
+    # inicializa os dispositivos que responderao aos sensores
     thermostat = SmartThermostat(broker)
     humidifier = Humidifier(broker)
     alarm = SecurityAlarm(broker)
     gas_detector = GasDetector(broker)
     lamp = Lamp(broker)
 
-    # Inscreve os dispositivos nos tópicos correspondentes
+    # inscreve os dispositivos nos topicos correspondentes
     broker.subscribe('temperature', thermostat)
     broker.subscribe('humidity', humidifier)
     broker.subscribe('motion', alarm)
     broker.subscribe('gas', gas_detector)
     broker.subscribe('light', lamp)
 
-    app.run(debug=True)  # Inicia a aplicação Flask em modo debug
+    app.run(debug=True)  # inicia a aplicacao Flask em modo debug
