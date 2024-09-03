@@ -2,6 +2,8 @@ from flask import Flask, render_template, jsonify, request
 from home_monitoring import MessageBroker, TemperatureSensor, HumiditySensor, MotionSensor, GasSensor, LightSensor
 from home_monitoring.models import SensorData, DeviceAction, SensorState
 from home_monitoring.sensors import GasDetector, Humidifier, Lamp, SecurityAlarm, SmartThermostat
+from apscheduler.schedulers.background import BackgroundScheduler
+import random
 
 app = Flask(__name__)  # inicializa a aplicacao Flask
 
@@ -60,11 +62,8 @@ def update_sensor():
     sensor_type = request.json.get('sensor_type')  # obtem o tipo de sensor a ser atualizado
     value = request.json.get('value')  # obtem o novo valor do sensor
     broker = MessageBroker.get_instance()  # obtem a instancia do MessageBroker
-    broker.publish(sensor_type, value)  # oublica a atualizacao no broker
+    broker.publish(sensor_type, value)  # publica a atualizacao no broker
     return jsonify({"message": f"{sensor_type} updated to {value}"}), 200
-
-from apscheduler.schedulers.background import BackgroundScheduler
-import random
 
 # funcao que simula a leitura de dados dos sensores
 def simulate_sensor_data():

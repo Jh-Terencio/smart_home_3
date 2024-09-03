@@ -13,13 +13,10 @@ A estrutura do projeto é organizada da seguinte forma:
 
    ```bash
    git clone https://github.com/seuusuario/home-monitoring-dashboard.git
-   cd home-monitoring-dashboard
-
+   cd home_monitoring
    python -m venv venv
-  
-  venv\Scripts\activate
-
-  pip install -r requirements.txt
-
-  python app.py 
+   cd ..
+   python.exe -m pip install --upgrade pip
+   pip install -r requirements.txt
+   python app.py
 

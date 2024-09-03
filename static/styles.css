@@ -137,3 +137,11 @@ button:hover {
   visibility: visible;
   opacity: 1;
 }
+
+.device.selected {
+  background-color: #1abc9c; /* Mesma cor de fundo do hover */
+  color: #fff; /* Cor do texto */
+  transform: translateY(-5px) scale(1.05); /* Efeito de transformação */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6); /* Mesma sombra do hover */
+  border: 2px solid #16a085; /* Borda com um tom complementar */
+}
