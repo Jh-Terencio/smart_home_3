@@ -14,10 +14,9 @@
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
             border: 2px solid #16a085;
         }
-
         /* Estilos para o modal */
         #sensor-options-modal {
-            display: none; /* Oculto por padrão */
+            display: none;
             position: fixed;
             z-index: 1000;
             left: 0;
@@ -25,45 +24,41 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro semitransparente */
+            background-color: rgba(0, 0, 0, 0.7);
         }
-
         #sensor-options-content {
-            background-color: #2c3e50; /* Mesma cor de fundo usada nas caixas de dispositivos */
+            background-color: #2c3e50;
             margin: 15% auto;
             padding: 20px;
             border-radius: 10px;
             width: 80%;
             max-width: 400px;
             text-align: center;
-            color: #ecf0f1; /* Cor do texto usada nos títulos e dispositivos */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* Sombra suave */
+            color: #ecf0f1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
-
         #sensor-options-content h3 {
             margin-bottom: 20px;
             font-size: 24px;
             color: #ecf0f1;
         }
-
         #sensor-options-content select {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
-            background-color: #34495e; /* Cor de fundo da seleção */
-            color: #ecf0f1; /* Cor do texto */
+            background-color: #34495e;
+            color: #ecf0f1;
             border: none;
             border-radius: 5px;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra interna */
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
             font-size: 16px;
         }
-
         #sensor-options-content button {
             display: block;
             width: 100%;
             padding: 15px;
             margin-top: 20px;
-            background-color: #e74c3c; /* Cor do botão Simular */
+            background-color: #e74c3c;
             color: white;
             border: none;
             border-radius: 5px;
@@ -71,57 +66,59 @@
             font-size: 18px;
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
-
         #sensor-options-content button:hover {
-            background-color: #c0392b; /* Efeito de hover */
+            background-color: #c0392b;
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Dashboard de Monitoramento Doméstico</h1>
+    <header>
+        <h1>{{ title }}</h1>
         <nav>
             <ul>
+                <li><a href="{{ url_for('index') }}">Início</a></li>
+                <li><a href="{{ url_for('add_device') }}">Adicionar Dispositivo</a></li>
+                <li><a href="{{ url_for('configure_sensor') }}">Configurar Sensor</a></li>
                 <li><a href="{{ url_for('sensor_data') }}">Histórico</a></li>
                 <li><a href="{{ url_for('device_actions') }}">Ações dos aparelhos</a></li>
             </ul>
         </nav>
-        <div id="content">
-            <h2>Aparelhos</h2>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>Aparelhos Configurados</h2>
             <div id="devices">
-                <div class="device" data-device="thermostat">
-                    <img id="thermostat-img" src="{{ url_for('static', filename='images/thermostat_off.png') }}" alt="Thermostat">
-                    <p>Termostato</p>
-                    <span class="tooltip"></span>
-                </div>
-                <div class="device" data-device="humidifier">
-                    <img id="humidifier-img" src="{{ url_for('static', filename='images/humidifier_off.png') }}" alt="Humidifier">
-                    <p>Umidificador</p>
-                    <span class="tooltip"></span>
-                </div>
-                <div class="device" data-device="lamp">
-                    <img id="lamp-img" src="{{ url_for('static', filename='images/lamp_off.png') }}" alt="Light-lamp">
-                    <p>Lâmpada</p>
-                    <span class="tooltip"></span>
-                </div>
-                <div class="device" data-device="gas">
-                    <img id="gas-img" src="{{ url_for('static', filename='images/sensor_gas_off.png') }}" alt="Gas">
-                    <p>Detector de Fumaça</p>
-                    <span class="tooltip"></span>
-                </div>
-                <div class="device" data-device="motion">
-                    <img id="movimento-img" src="{{ url_for('static', filename='images/sensor_movimento_off.png') }}" alt="Movimento">
-                    <p>Sensor de Movimento</p>
-                    <span class="tooltip"></span>
-                </div>
+                {% if devices %}
+                    {% for device in devices %}
+                        <div class="device" data-device="{{ device.type }}">
+                            <img id="{{ device.type }}-img" src="{{ url_for('static', filename=device_images[device.type]) }}" alt="{{ device.type }}" style="width: 100px; height: auto;">
+                            <p>{{ device.name }} ({{ device.type | capitalize }})</p>
+                            <span class="tooltip"></span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Nenhum dispositivo configurado ainda.</p>
+                {% endif %}
             </div>
+
+            <h2>Sensores Configurados</h2>
+            {% if sensors %}
+                <ul>
+                    {% for sensor in sensors %}
+                        <li>Sensor de {{ sensor.type }} - Threshold: {{ sensor.threshold }} - Intervalo: {{ sensor.interval }}s</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Nenhum sensor configurado ainda.</p>
+            {% endif %}
+
             <button id="simulate-button">Simular dados do sensor</button>
         </div>
-    </div>
+    </main>
 
-    <!-- Modal para opções do sensor -->
     <div id="sensor-options-modal">
         <div id="sensor-options-content">
             <h3>Configurações do Sensor</h3>
@@ -184,7 +181,7 @@
                 const options = sensorRules[device];
                 $('#sensor-option').empty();
                 options.forEach(option => {
-                    $('#sensor-option').append(`<option value="${option.action}">${option.condition} - ${option.action}</option>`);
+                    $('#sensor-option').append(`<option value="${option.newImage}">${option.condition} - ${option.action}</option>`);
                 });
             }
 
@@ -203,9 +200,9 @@
                     data: { device: selectedDevice, option: option },
                     success: function(response) {
                         alert(response.message);
+                        updateDeviceImages();
                         $('#devices .device.selected').removeClass('selected');
                         selectedDevice = null;
-                        updateDeviceImages();
                     },
                     error: function(xhr, status, error) {
                         alert("Ocorreu um erro: " + error);
@@ -294,3 +291,4 @@
     </script>
 </body>
 </html>
+
