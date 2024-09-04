@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='data_styles.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>{{ title }}</h1>
+{% extends "base.html" %}
+
+{% block content %}
         <div class="table-container">
             <table>
                 <thead>
@@ -29,6 +21,4 @@
                 </tbody>
             </table>
         </div>
-    </div>
-</body>
-</html>
+{% endblock %}

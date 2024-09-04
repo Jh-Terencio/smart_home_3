@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Monitoring Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='data_styles.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -28,7 +29,8 @@
                 {% if devices %}
                     {% for device in devices %}
                         <div class="device" data-device="{{ device.type }}">
-                            <img id="{{ device.type }}-img" src="{{ url_for('static', filename=device_images[device.type]) }}" alt="{{ device.type }}" style="width: 100px; height: auto;">
+                            <!-- Adicionando loop.index para garantir IDs únicos -->
+                            <img id="{{ device.type }}-img-{{ loop.index }}" src="{{ url_for('static', filename=device_images[device.type]) }}" alt="{{ device.type }}" style="width: 100px; height: auto;">
                             <p>{{ device.name }} ({{ device.type | capitalize }})</p>
                             <span class="tooltip"></span>
                         </div>
@@ -56,7 +58,7 @@
     </main>
 
     <script>
-            $(document).ready(function() {
+    $(document).ready(function() {
         function updateDeviceImages() {
             $.ajax({
                 url: "/api/current_conditions",
@@ -68,45 +70,56 @@
                     let gas = response.gas;
                     let motion = response.motion;
 
-                    if (temperature > 25) {
-                        $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_cool.png') }}");
-                    } else if (temperature < 15){
-                        $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_heat.png') }}");
-                    } else {
-                        $('#thermostat-img').attr('src', "{{ url_for('static', filename='images/thermostat_off.png') }}");
-                    }
-                    $('div[data-device="thermostat"] .tooltip').text('Temperature: ' + temperature + '°C');
+                    $('div[data-device="thermostat"]').each(function(index) {
+                        if (temperature > 25) {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/thermostat_cool.png') }}");
+                        } else if (temperature < 15) {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/thermostat_heat.png') }}");
+                        } else {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/thermostat_off.png') }}");
+                        }
+                        $(this).find('.tooltip').text('Temperature: ' + temperature + '°C');
+                    });
 
-                    if (humidity < 40) {
-                        $('#humidifier-img').attr('src', "{{ url_for('static', filename='images/humidifier_on.png') }}");
-                    } else {
-                        $('#humidifier-img').attr('src', "{{ url_for('static', filename='images/humidifier_off.png') }}");
-                    }
-                    $('div[data-device="humidifier"] .tooltip').text('Humidity: ' + humidity + '%');
+                    $('div[data-device="humidifier"]').each(function(index) {
+                        if (humidity < 40) {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/humidifier_on.png') }}");
+                        } else {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/humidifier_off.png') }}");
+                        }
+                        $(this).find('.tooltip').text('Humidity: ' + humidity + '%');
+                    });
 
-                    if (light < 300) {
-                        $('#lamp-img').attr('src', "{{ url_for('static', filename='images/lamp_on.png') }}");
-                    } else {
-                        $('#lamp-img').attr('src', "{{ url_for('static', filename='images/lamp_off.png') }}");
-                    }
-                    $('div[data-device="lamp"] .tooltip').text('Light: ' + light + ' lux');
+                    $('div[data-device="lamp"]').each(function(index) {
+                        if (light < 300) {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/lamp_on.png') }}");
+                        } else {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/lamp_off.png') }}");
+                        }
+                        $(this).find('.tooltip').text('Light: ' + light + ' lux');
+                    });
 
-                    if (gas > 300){
-                        $('#gas-img').attr('src', "{{ url_for('static', filename='images/sensor_gas_on.png') }}");
-                    } else{
-                        $('#gas-img').attr('src', "{{ url_for('static', filename='images/sensor_gas_off.png') }}");
-                    }
-                    $('div[data-device="gas"] .tooltip').text('Gas: ' + gas + ' ppm');
+                    $('div[data-device="gas"]').each(function(index) {
+                        if (gas > 300) {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/sensor_gas_on.png') }}");
+                        } else {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/sensor_gas_off.png') }}");
+                        }
+                        $(this).find('.tooltip').text('Gas: ' + gas + ' ppm');
+                    });
 
-                    if (motion == 1) {
-                        $('#movimento-img').attr('src', "{{ url_for('static', filename='images/sensor_movimento_on.png') }}");
-                    } else{
-                        $('#movimento-img').attr('src', "{{ url_for('static', filename='images/sensor_movimento_off.png') }}");
-                    }
-                    $('div[data-device="motion"] .tooltip').text('Motion: ' + (motion == 1 ? 'Detected' : 'None'));
+                    $('div[data-device="alarm"]').each(function(index) {
+                        if (motion == 1) {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/sensor_alarm_on.png') }}");
+                        } else {
+                            $(this).find('img').attr('src', "{{ url_for('static', filename='images/sensor_alarm_off.png') }}");
+                        }
+                        $(this).find('.tooltip').text('Motion: ' + (motion == 1 ? 'Detected' : 'None'));
+                    });
+
                 },
                 error: function(xhr, status, error) {
-                    alert("Um erro ocorreu enquanto buscava as condiçoes atuais: " + error);
+                    alert("Um erro ocorreu enquanto buscava as condições atuais: " + error);
                 }
             });
         }
@@ -127,8 +140,6 @@
 
         updateDeviceImages();
     });
-
     </script>
 </body>
 </html>
-
