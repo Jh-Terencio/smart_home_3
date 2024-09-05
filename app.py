@@ -96,7 +96,6 @@ def configure_sensor():
         return redirect(url_for('index'))
     return render_template('configure_sensor.html', title="Configurar Sensor")
 
-from apscheduler.schedulers.background import BackgroundScheduler
 
 # funcao que simula a leitura de dados dos sensores
 def simulate_sensor_data():
