@@ -1,4 +1,6 @@
-# 1. Visão Geral do Projeto
+# Smart Home Monitoring
+
+## 1. Visão Geral do Projeto
 
 **Nome:** Home Monitoring Dashboard
 
@@ -10,7 +12,7 @@ O Home Monitoring Dashboard é um sistema de monitoramento residencial inteligen
 
 Criar um sistema de monitoramento residencial inteligente que utiliza a arquitetura _publish-subscribe_ para integrar dispositivos IoT em uma rede doméstica, facilitando a automação de tarefas como controle de iluminação, alarme e controle de temperatura.
 
-# 2. Arquitetura do Sistema
+## 2. Arquitetura do Sistema
 
 **Estilo de Arquitetura:** Publish-Subscribe
 
@@ -26,7 +28,7 @@ O sistema segue o paradigma _publish-subscribe_ (pub/sub), onde sensores e dispo
 - **Websockets:** Facilitam a comunicação em tempo real na interface web.
 - **Interface Web:** Fornece uma visão centralizada dos dados do sistema e permite a configuração de dispositivos e a simulação de dados de sensores.
 
-# 3. Componentes do Sistema
+## 3. Componentes do Sistema
 
 **Sensores:**
 
@@ -52,20 +54,24 @@ O sistema segue o paradigma _publish-subscribe_ (pub/sub), onde sensores e dispo
 
 1. Crie a venv (Ambiente virtual):
 
-   ```
+   ``` bash
    python -m venv venv
    ```
 
 2. Ative a venv
-   ```
+
+   ``` bash
    venv\Scripts\activate
    ```
+
 3. Instale as bibliotecas
-   ```
+
+   ``` bash
    pip install -r requirements.txt
    ```
-4. Execute `python app.py` para executar o código:
-   ```
-   python app.py
-   ```   
 
+4. Execute `python app.py` para executar o código:
+
+   ``` bash
+   python app.py
+   ```
